@@ -1,0 +1,9 @@
+Hi {FULLNAME},<br/>
+<br/>
+Your password is : {PWD}<br/>
+<br/>
+<a href="{URL}">Click Here to login to your account</a><br/>
+<br/>
+Thanks,<br/>
+<br/>
+Admin Team<br/>

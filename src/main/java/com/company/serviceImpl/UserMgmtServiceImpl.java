@@ -1,5 +1,8 @@
 package com.company.serviceImpl;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,12 +19,16 @@ import com.company.bindings.User;
 import com.company.entity.UserDetails;
 import com.company.repo.UserDetailsRepo;
 import com.company.service.UserMgmtService;
+import com.company.utils.EmailUtils;
 
 @Service
 public class UserMgmtServiceImpl implements UserMgmtService {
 
 	@Autowired
-	UserDetailsRepo userDetailsRepo;
+	private UserDetailsRepo userDetailsRepo;
+	
+	@Autowired
+	private EmailUtils emailUtils;
 
 	@Override
 	public boolean saveUser(User user) {
@@ -34,7 +41,14 @@ public class UserMgmtServiceImpl implements UserMgmtService {
 
 		UserDetails save = userDetailsRepo.save(entity);
 
-		// TODO: send registration email
+		String subject = "Registration Almost completed";
+		String filename = "REG-MAIL-BODY.txt";
+//		a template of mail is in a txt file
+		String body = readEmailBody(entity.getFullName(), entity.getPassword(), filename);
+//		send registration email..body is dynamic
+		boolean sendMail = emailUtils.sendMail(entity.getEmailId(), subject, body);
+
+		System.out.println("Email sent: " + sendMail);
 
 		return save.getUserId() != null;
 	}
@@ -162,8 +176,16 @@ public class UserMgmtServiceImpl implements UserMgmtService {
 		}
 
 		// TODO: send pwd to user's email
+		String subject = "Password Recovery";
+		String filename = "RECOVER-PWD-BODY.txt";
+		String body = readEmailBody(entity.getFullName(), entity.getPassword(), filename);
+		
+		boolean sendMail = emailUtils.sendMail(entity.getFullName(), subject, body);
+		
+		if(sendMail)
+			return "Mail sent successfully";
 
-		return null;
+		return "Error sending mail";
 	}
 
 	private String generateRandomPwd() {
@@ -188,6 +210,37 @@ public class UserMgmtServiceImpl implements UserMgmtService {
 		}
 
 		return sb.toString();
+	}
+
+	private String readEmailBody(String fullName, String password, String filename) {
+
+		String mailBody = "";
+		String url = "";
+
+		try {
+			FileReader fr = new FileReader(filename);
+			BufferedReader br = new BufferedReader(fr);
+
+			StringBuffer sb = new StringBuffer();
+			String line = br.readLine();
+
+			while (line != null) {
+				sb.append(line);
+				br.readLine();
+			}
+			
+			br.close();
+			mailBody = br.toString();
+
+			mailBody = mailBody.replace("{FULLNAME}", fullName);
+			mailBody = mailBody.replace("{PWD}", password);
+			mailBody = mailBody.replace("{URL}", url);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return mailBody;
 	}
 
 }
