@@ -11,7 +11,7 @@ public class User {
 	
 	private Long mobNo;
 	
-	private Character gender;
+	private String gender;
 	
 	private String dob;
 	

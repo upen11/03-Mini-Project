@@ -26,7 +26,7 @@ public class UserMgmtServiceImpl implements UserMgmtService {
 
 	@Autowired
 	private UserDetailsRepo userDetailsRepo;
-	
+
 	@Autowired
 	private EmailUtils emailUtils;
 
@@ -161,7 +161,7 @@ public class UserMgmtServiceImpl implements UserMgmtService {
 			if (entity.getAccStatus().equals("Active"))
 				return "Login Successful";
 			else
-				return "Account is In-Active. Contact Amdin";
+				return "Account is In-Active. Contact Admin";
 		}
 
 		return "Login Failed. Invalid Credentials";
@@ -175,14 +175,14 @@ public class UserMgmtServiceImpl implements UserMgmtService {
 			return "Invalid Email";
 		}
 
-		// TODO: send pwd to user's email
+		// send pwd to user's email
 		String subject = "Password Recovery";
 		String filename = "RECOVER-PWD-BODY.txt";
 		String body = readEmailBody(entity.getFullName(), entity.getPassword(), filename);
-		
+
 		boolean sendMail = emailUtils.sendMail(entity.getFullName(), subject, body);
-		
-		if(sendMail)
+
+		if (sendMail)
 			return "Mail sent successfully";
 
 		return "Error sending mail";
@@ -226,9 +226,9 @@ public class UserMgmtServiceImpl implements UserMgmtService {
 
 			while (line != null) {
 				sb.append(line);
-				br.readLine();
+				line = br.readLine();
 			}
-			
+
 			br.close();
 			mailBody = br.toString();
 

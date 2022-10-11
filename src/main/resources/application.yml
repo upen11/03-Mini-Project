@@ -1,6 +1,24 @@
 spring:
+  datasource:
+    username: root
+    password: root123
+    url: jdbc:mysql://localhost:3306/test
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
   mail:
-    host: 
-    port: 0000
-    username: 
-    password: 
+    host: smtp.gmail.com
+    port: 587
+    username: <email>
+    password: <pwd>
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  mvc: 
+    pathmatch: 
+      matching-strategy: ANT_PATH_MATCHER
